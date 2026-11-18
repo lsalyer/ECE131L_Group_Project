@@ -15,6 +15,7 @@ void addItem(Player *p, char *s) {
         }
     }
 }
+
 void rmItem(Player *p, char *s) {
     for (int i = 0; i < MAX_ITEM; i++) {
         int compare = strcmp(p->items[i], s);
@@ -25,6 +26,15 @@ void rmItem(Player *p, char *s) {
         
     }
     
+}
+
+int numItems(Player *p){
+    int i = 0;
+    while(p->items[i] != ""){
+        i++;
+    }
+
+    return i;
 }
 
 /*
@@ -38,13 +48,15 @@ Index   | Item Tracked
 6       | Journal Access
 7       | Cabinets
 8       | Toolbox
-9       | Oil
-10      | Dresser
-11      | Clothes
-12      | Small Brass Key
-13      | Bed
-14      | Lockbox
-15      | Key
+9       | Oil (item)
+10      | Oil (used)
+11      | Dresser
+12      | Clothes
+13      | Small Brass Key (item)
+14      | Small Brass Key (used)
+15      | Bed
+16      | Lockbox
+17      | Key
 */
 void progUpdate(Player *p, int index) {
     p->progress_check[index] = true;

@@ -175,17 +175,29 @@ void gameMenu(){
     
 }
 
-void drawGameScreen(Player *p){
-    clearScreen();
-    boxBorder(gWidth, gheight, 1, 1);
-    userInfo(p);
-    gameMenu(); 
+
+void drawGameScreen(Player *p, int withMenu){
+    if(withMenu == 1){
+        clearScreen();
+        boxBorder(gWidth, gheight, 1, 1);
+        userInfo(p);
+        gameMenu();  
+    } else {
+        clearScreen();
+        boxBorder(gWidth, gheight, 1, 1);
+        userInfo(p);
+    }
+    
 }
 
 int getInput(){
     int selection = 0;
     while (selection < 1 || selection > 5){
-        printText("What would you like to do? ", 28, gheight - 3, 0, gWidth, 'c');
+        //Clears invalid numbers
+        changePos(gheight - 3, (gWidth / 2) + 10);
+        printf("    ");
+        //Prints prompt and gets input
+        printText("Enter your selection: ", 23, gheight - 3, 0, gWidth, 'c');
         scanf("%d", &selection);
     }
     return selection;

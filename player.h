@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define NUM_CHECK 15
+#define NUM_CHECK 17
 #define MAX_LEN 10
 #define MAX_ITEM 5
 #define MAX_NAME 20
@@ -24,5 +24,6 @@ void progUpdate(Player *p, int index);
 //usr input string name, creates progesscheck to false, and create array of string with nothing.
 //journal, code, oil, small brass key, master key
 Player* createPlayer(char name[]); 
+int numItems(Player *p);
 
 #endif
