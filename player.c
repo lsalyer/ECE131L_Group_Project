@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "player.h"
+#include "text.h"
+#include "navigation.h"
 
 void addItem(Player *p, char *s) {
     for (int i = 0; i < MAX_ITEM; i++) {
@@ -25,9 +27,29 @@ void rmItem(Player *p, char *s) {
     
 }
 
+/*
+Index   | Item Tracked
+0       | Crooked Painting
+1       | Fusebox
+2       | Lights
+3       | Sheet Covering
+4       | Workbench
+5       | Journal
+6       | Journal Access
+7       | Cabinets
+8       | Toolbox
+9       | Oil
+10      | Dresser
+11      | Clothes
+12      | Small Brass Key
+13      | Bed
+14      | Lockbox
+15      | Key
+*/
 void progUpdate(Player *p, int index) {
     p->progress_check[index] = true;
 }
+
 
 Player* createPlayer(char name[]) {
     //Allocate mem

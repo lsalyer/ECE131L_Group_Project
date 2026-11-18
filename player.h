@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define NUM_CHECK 4
+#define NUM_CHECK 15
 #define MAX_LEN 10
 #define MAX_ITEM 5
 #define MAX_NAME 20

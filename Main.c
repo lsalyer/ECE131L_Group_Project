@@ -1,15 +1,10 @@
 #include <stdio.h>
-#include <string.h>
-#include "text.h"
-#include "images.h"
 #include "player.h"
+#include "text.h"
 #include "navigation.h"
+#include "images.h"
 
 void menu();
-void gameScreen();
-void clearScreen();
-void initGame();
-void introScene(Player *p);
 
 int main(){
     clearScreen();
@@ -18,9 +13,8 @@ int main(){
 
 void menu(){
     int selection = 0;
-    //char input[10];
-    //do
-    //{
+    do
+    {
         boxBorder(gWidth, gheight, 1, 1);
         titleImage();
         printText("[1] Play", 9, 14, 0, gWidth, 'c');
@@ -31,7 +25,7 @@ void menu(){
         scanf("%d", &selection);
         
         //fgets(input, 10, stdin);
-    //} while (input[0] != '1' && input[0] != '2');
+    } while (selection != 1 && selection != 2);
     if(selection == 1){
         clearBuffer();
         initGame();
@@ -59,18 +53,7 @@ void gameScreen(){
         while (1){}
 }
 
-void initGame(){
-    clearScreen();
-    boxBorder(gWidth, gheight, 1, 1);
 
-    char name[MAX_NAME];
-    boxBorder(36, 5, 8, 42);
-    printText("Player Name:", 12, 10, 0, gWidth, 'c');
-    changePos(11, 50);
-    fgets(name, 30, stdin);
-    Player *p1 = createPlayer(name);
-    wallOne(p1);
-}
 
 
 

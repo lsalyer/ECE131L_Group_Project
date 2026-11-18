@@ -6,6 +6,7 @@
 
 #include "player.h"
 
+void clearScreen();
 void userInfo(Player *p);
 void printText(char arr[], int size, int line, int del, int w, char a);
 void borderTop(int w, int h, int line, int col);

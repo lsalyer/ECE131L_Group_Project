@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+#include "player.h"
 #include "text.h"
+#include "navigation.h"
 
 //Parameters: Text array, size of array, line to being printing, delay, width of text area, and alignment (c)enter, (l)eft, or (r)ight
 void printText(char arr[], int size, int line, int del, int w, char a){
