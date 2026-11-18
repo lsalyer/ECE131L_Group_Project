@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "text.h"
 
 //Parameters: Text array, size of array, line to being printing, delay, width of text area, and alignment (c)enter, (l)eft, or (r)ight
@@ -125,7 +126,7 @@ int getAlignment(char arr[], int size, int w, char a){
 int numLines(char arr[], int size){
     int lines = 1;
     for(int i = 0; i < size; i++){
-        if (arr[i] == '\n'){lines += 1;}
+        if (arr[i] == '\n'){lines++;}
     }
     return lines;
 }
@@ -135,8 +136,65 @@ int nextLine(char arr[], int size, int start){
     for(int i = start; i < size; i++){
         if(arr[i] == '\n'){
             return i;
-        } else if (i == size - 1) {
+        } else if (i == size) {
             return i;
         }
     }
+}
+
+void userInfo(Player *p){
+    boxBorder(24, 14, 4, gWidth - 26);
+    changePos(5, gWidth - 24);
+    printf("Player:");
+    changePos(6, gWidth - 24);
+    printf("%s", p->name);
+    changePos(8, gWidth - 24);
+    printf("Progress");
+    changePos(9, gWidth - 24);
+    printf("%d/%d Steps Complete", progressNum(p), NUM_CHECK);
+    changePos(11, gWidth - 24);
+    printf("Inventory:");
+    for (int i = 0; i < MAX_ITEM; i++){
+        if (p->items[i] != ""){
+           changePos(i + 12, gWidth - 24); 
+           printf("%s", p->items[i]);
+        }
+    }
+}
+
+void clearBuffer(){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+void gameMenu(){
+    char menu[] = "[1] Turn Left  [2] Interact  [3] Turn Left\n[4] Use Item  [5] Exit";
+    printText(menu, strlen(menu), gheight - 6, 0, gWidth, 'c');
+    
+}
+
+void drawGameScreen(Player *p){
+    clearScreen();
+    boxBorder(gWidth, gheight, 1, 1);
+    userInfo(p);
+    gameMenu(); 
+}
+
+int getInput(){
+    int selection = 0;
+    while (selection < 1 || selection > 5){
+        printText("What would you like to do? ", 28, gheight - 3, 0, gWidth, 'c');
+        scanf("%d", &selection);
+    }
+    return selection;
+}
+
+int progressNum(Player *p){
+    int progress = 0;
+    for (int i = 0; i < NUM_CHECK; i++){
+        if (p->progress_check[i] == true){
+            progress++;
+        }
+    }
+    return progress;
 }

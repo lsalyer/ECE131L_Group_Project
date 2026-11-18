@@ -1,13 +1,15 @@
 #include <stdio.h>
+#include <string.h>
 #include "text.h"
 #include "images.h"
-
-const int gWidth = 120;
-const int gheight = 22;
+#include "player.h"
+#include "navigation.h"
 
 void menu();
 void gameScreen();
 void clearScreen();
+void initGame();
+void introScene(Player *p);
 
 int main(){
     clearScreen();
@@ -16,8 +18,9 @@ int main(){
 
 void menu(){
     int selection = 0;
-    do
-    {
+    //char input[10];
+    //do
+    //{
         boxBorder(gWidth, gheight, 1, 1);
         titleImage();
         printText("[1] Play", 9, 14, 0, gWidth, 'c');
@@ -26,13 +29,17 @@ void menu(){
 
         changePos(17, 68);
         scanf("%d", &selection);
-    } while (selection != 1 && selection != 2);
+        
+        //fgets(input, 10, stdin);
+    //} while (input[0] != '1' && input[0] != '2');
     if(selection == 1){
-        gameScreen();
+        clearBuffer();
+        initGame();
     }
     clearScreen();
 }
 
+//Test screen
 void gameScreen(){
 
         clearScreen();
@@ -47,10 +54,25 @@ void gameScreen(){
         int secSize = sizeof(secText) / sizeof(secText[0]);
         changePos(line, col);
         printText(arrText, size, line, 6, gWidth, 'r');
-        printText(secText, secSize, 5, 3, gWidth, 'l');
+        printText(secText, secSize, 2, 3, gWidth, 'l');
 
         while (1){}
 }
+
+void initGame(){
+    clearScreen();
+    boxBorder(gWidth, gheight, 1, 1);
+
+    char name[MAX_NAME];
+    boxBorder(36, 5, 8, 42);
+    printText("Player Name:", 12, 10, 0, gWidth, 'c');
+    changePos(11, 50);
+    fgets(name, 30, stdin);
+    Player *p1 = createPlayer(name);
+    wallOne(p1);
+}
+
+
 
 
 
