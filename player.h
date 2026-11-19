@@ -2,8 +2,9 @@
 #define PLAYER_H
 
 #include <stdbool.h>
+#include <ctype.h>
 
-#define NUM_CHECK 17
+#define NUM_CHECK 18
 #define MAX_LEN 10
 #define MAX_ITEM 5
 #define MAX_NAME 20
@@ -25,5 +26,7 @@ void progUpdate(Player *p, int index);
 //journal, code, oil, small brass key, master key
 Player* createPlayer(char name[]); 
 int numItems(Player *p);
+int tasksComplete(Player *p);
+void exitGame(Player *p, int wall);
 
 #endif

@@ -22,7 +22,7 @@ int numLines(char arr[], int size);
 int nextLine(char arr[], int size, int start);
 void clearBuffer();
 void gameMenu();
-int getInput();
+int getInput(int min, int max);
 void drawGameScreen(Player *p, int withMenu);
 int progressNum(Player *p);
 

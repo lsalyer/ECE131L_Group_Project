@@ -30,11 +30,21 @@ void rmItem(Player *p, char *s) {
 
 int numItems(Player *p){
     int i = 0;
-    while(p->items[i] != ""){
+    while(strcmp(p->items[i], "") != 0){
         i++;
     }
 
     return i;
+}
+
+int tasksComplete(Player *p){
+    int complete = 0;
+    for(int i = 0; i < NUM_CHECK; i++){
+        if(p->progress_check[i] == true){
+            complete++;
+        }
+    }
+    return complete;
 }
 
 /*
@@ -56,7 +66,7 @@ Index   | Item Tracked
 14      | Small Brass Key (used)
 15      | Bed
 16      | Lockbox
-17      | Key
+17      | Door Key
 */
 void progUpdate(Player *p, int index) {
     p->progress_check[index] = true;
@@ -83,4 +93,27 @@ Player* createPlayer(char name[]) {
     }
     
     return pptr;
+}
+
+void exitGame(Player *p, int wall){
+    int boxW = 38;
+    int boxH = 4;
+    char selection = 'a';
+    drawGameScreen(p, 0);
+    boxBorder(boxW, boxH, (gheight / 2) - (boxH / 2), (gWidth / 2) - (boxW / 2));
+    printText("Exiting will erase all progress.\nDo you want to continue? Y/N: ",
+        62, (gheight / 2) - (boxH / 2) + 2, 0, gWidth, 'c');
+    while(tolower(selection) != 'y' && tolower(selection) != 'n'){
+        changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+        printf("  ");
+        changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+        scanf("%c", &selection);
+    }
+    if(tolower(selection) == 'y'){
+        free(p);
+        EXIT_SUCCESS;
+    } else {
+        movingChoice(p, wall, wall);
+    }
+    
 }

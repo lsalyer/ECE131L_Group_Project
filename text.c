@@ -145,17 +145,27 @@ int nextLine(char arr[], int size, int start){
 }
 
 void userInfo(Player *p){
+    int startCol = gWidth - 24;
+    int tasksComp = tasksComplete(p);
+    int percentComp = (((float)tasksComp / 17) * 100);
     boxBorder(24, 14, 4, gWidth - 26);
-    changePos(5, gWidth - 24);
+    changePos(5, startCol);
     printf("Player:");
-    changePos(6, gWidth - 24);
+    changePos(6, startCol);
     printf("%s", p->name);
-    changePos(8, gWidth - 24);
+    changePos(8, startCol);
     printf("Progress");
-    changePos(9, gWidth - 24);
-    printf("%d/%d Steps Complete", progressNum(p), NUM_CHECK);
-    changePos(11, gWidth - 24);
-    printf("Inventory:");
+    for(int i = 0; i < tasksComp; i++){
+        changePos(9, startCol + i);
+        printf("\e[47m \e[40m");
+    }
+    changePos(9, startCol + 16);
+    printf("]");
+    changePos(9, startCol + 17);
+    printf("%d%%", percentComp);
+    //printf("%d/%d Steps Complete", progressNum(p), NUM_CHECK);
+    changePos(11, startCol);
+    printf("Inventory[%d]:", numItems(p));
     for (int i = 0; i < MAX_ITEM; i++){
         if (p->items[i] != ""){
            changePos(i + 12, gWidth - 24); 
@@ -190,16 +200,17 @@ void drawGameScreen(Player *p, int withMenu){
     
 }
 
-int getInput(){
+int getInput(int min, int max){
     int selection = 0;
-    while (selection < 1 || selection > 5){
+    do {
         //Clears invalid numbers
         changePos(gheight - 3, (gWidth / 2) + 10);
-        printf("    ");
+        printf("                                 ");
         //Prints prompt and gets input
         printText("Enter your selection: ", 23, gheight - 3, 0, gWidth, 'c');
         scanf("%d", &selection);
-    }
+        clearBuffer();
+    } while (selection < min || selection > max);
     return selection;
 }
 
