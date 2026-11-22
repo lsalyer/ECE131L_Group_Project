@@ -1,11 +1,6 @@
 #include <stdio.h>
-#include "player.h"
-#include "text.h"
-#include "navigation.h"
-
-#define DELAY 0
-#define MENU_MIN 1
-#define MENU_MAX 5
+#include "ui.h"
+#include "logic.h"
 // Richard Zoltowski
 
 void movingChoice(Player *p, int usrImp, int wall){
@@ -32,19 +27,7 @@ void movingChoice(Player *p, int usrImp, int wall){
 void wallOne(Player *p){
     int wall = 1;
     drawGameScreen(p, 1);
-    //Check if the bed has been checked
-    if(!p->progress_check[15]){
-        printText("There is a Bed in front of you", 31, 5, DELAY, gWidth, 'c');
-    //Check if oil has been used on lockbox
-    } else if (!p->progress_check[10]){
-        printText("You can see a Lockbox under the bed, but\nit is locked and the dial is stuck.", 77, 5, DELAY, gWidth, 'c');
-    } else if (!p->progress_check[17]){
-        printText("You can see a Lockbox under the bed with a combination dial.", 61, 5, DELAY, gWidth, 'c');
-    } else {
-        printText("You can see an opened Lockbox under the bed,\n"
-            "but it is empty", 61, 5, DELAY, gWidth, 'c');
-    }
-    
+    printWallOne(p);
     int choice = getInput(MENU_MIN, MENU_MAX);
     switch(choice){
         case 1:
@@ -56,6 +39,9 @@ void wallOne(Player *p){
                 progUpdate(p, 15);
                 wallOne(p);
             //If oil has not been used, call function to let user know
+            } else if (!p->progress_check[16]){
+                progUpdate(p, 16);
+                wallOne(p);
             } else {
                 wallOne(p);
             }
@@ -79,27 +65,7 @@ void wallTwo(Player *p){
     drawGameScreen(p, 1);
     //Determine that proper text to display based on progress
     //Sheet has not been removed
-    if(!p->progress_check[3]){
-        printText("There is a sheet covering something in front of you", 52, 5, DELAY, gWidth, 'c');
-    //Sheet has been removed
-    } else if (!p->progress_check[4]){
-        printText("There is a workbech in front of you\nwith a Journal on it", 57, 5, DELAY, gWidth, 'c');
-    //Journal has been picked up
-    } else if (!p->progress_check[7]){
-        printText("There is a workbench in front of you\nwith Cabinets", 51, 5, DELAY, gWidth, 'c');
-    //Lockbox has been found
-    } else if (!p->progress_check[8]){
-        //Text if Small Brass Key has been used
-        if(p->progress_check[10]){
-            printText("There is a workbench in front of you with an unlocked toolbox on it.", 69, 5, DELAY, gWidth, 'c');
-        //Small Brass Key has not been used
-        } else {
-            printText("There is an open cabinet in front of you with a toolbox in it.\nThe toolbox is locked.", 86, 5, DELAY, gWidth, 'c');
-        }
-    } else {
-        printText("There is an open cabinet with an empty\n"
-            "toolbox in front of you.", 64, 5, DELAY, gWidth, 'c');
-    }
+    printWallTwo(p);
     int choice = getInput(MENU_MIN, MENU_MAX);
     switch(choice){
         case 1:
@@ -112,12 +78,11 @@ void wallTwo(Player *p){
                 //Reload wall
                 wallTwo(p);
             } else if (!p->progress_check[4]){
-                //User gets Journal
+                //Update that workbench is uncluttered   
                 addItem(p, "Journal");
-                //Update that workbench searched and Journal retrieved
+                progUpdate(p, 5);            
                 progUpdate(p, 4);
-                progUpdate(p, 5);
-                wallTwo(p);
+                wallTwo(p);                
             } else if (!p->progress_check[7]){
                 //Update that cabinets searched
                 progUpdate(p, 7);
@@ -144,19 +109,7 @@ void wallThree(Player *p){
     drawGameScreen(p, 1);
     //Determine that proper text to display based on progress
     //Dresser is closed
-    if(!p->progress_check[11]){
-        printText("There is a dresser in front of you.", 36, 5, DELAY, gWidth, 'c');
-    //Dresser opened
-    } else if (!p->progress_check[12]){
-        printText("You open the dresser drawer and see clothing.", 46, 5, DELAY, gWidth, 'c');
-    //Clothes have been moved
-    } else if (!p->progress_check[13]){
-        printText("You see a Small Brass Key under the clothing.", 47, 5, DELAY, gWidth, 'c');
-    //Small Brass Key taken
-    } else {
-        printText("There is a dresser with the drawer open,\n"
-            "but, there does not appear to be anything useful here.", 96, 5, DELAY, gWidth, 'c');
-    } 
+    printWallThree(p);
     int choice = getInput(MENU_MIN, MENU_MAX);
     switch(choice){
         case 1:
@@ -199,18 +152,7 @@ void wallFour(Player *p){
     drawGameScreen(p, 1);
     //Determine that proper text to display based on progress
     //Crooked painting is hanging on wall
-    if(!p->progress_check[0]){
-        printText("There is a crooked painting on the wall.", 41, 5, DELAY, gWidth, 'c');
-    //Painting has fallen
-    } else if (!p->progress_check[1]){
-        printText("The painting fell to the floor when you touched it.\n"
-            "A fuse box is now visible, but it seems one of the\n"
-            "switches is turned off.", 127, 5, DELAY, gWidth, 'c');
-    //Fuse switched on
-    } else if (!p->progress_check[17]){
-        printText("When you flipped the fuse, the lights turned\n"
-            "on! There is a locked door to the outside.", 88, 5, DELAY, gWidth, 'c');
-    }
+    printWallFour(p);
     int choice = getInput(MENU_MIN, MENU_MAX);
     switch(choice){
         case 1:
@@ -219,6 +161,7 @@ void wallFour(Player *p){
         case 2:
             if(!p->progress_check[0]){
                 //Update to show painting fell
+                paintingFalling(p);
                 progUpdate(p, 0);
                 //Reload wall
                 wallFour(p);
@@ -250,30 +193,110 @@ void initGame(){
     boxBorder(36, 5, 8, 42);
     printText("Player Name:", 12, 10, 0, gWidth, 'c');
     changePos(11, 50);
-    fgets(name, 30, stdin);
+    fgets(name, MAX_NAME, stdin);
     Player *p1 = createPlayer(name);
-    wallOne(p1);
+    introScene(p1);
 }
 
 void menu(){
     boxBorder(gWidth, gheight, 1, 1);
     titleImage();
-    printText("[1] Play", 9, 14, 0, gWidth, 'c');
-    printText("[2] Exit", 9, 15, 0, gWidth, 'c');
-    int selection = getInput(1, 2);
+    int line = 14;
+    char optionOne[] = "[1] Play";
+    char optionTwo[] = "[2] Load"; 
+    char optionThree[] = "[3] Exit";
+    printText(optionOne, strlen(optionOne), line++, 0, gWidth, 'c');
+    printText(optionTwo, strlen(optionTwo), line++, 0, gWidth, 'c');
+    printText(optionThree, strlen(optionThree), line, 0, gWidth, 'c');
+    int selection = getInput(1, 3);
     if(selection == 1){
         initGame();
+    } else if (selection == 2){
+        loadMenu();
+    } else {
+        exit(EXIT_SUCCESS);
     }
     clearScreen();
 }
 
-void gameComplete(Player *p){
-    char selection = 'a';
+
+void loadMenu(){
     clearScreen();
     boxBorder(gWidth, gheight, 1, 1);
-    printText("CONGRATULATIONS!\n"
-        "You Escaped the Room!", 39, gheight / 2, DELAY, gWidth, 'c');
-    printText("Press Enter to Continue", 24, (gheight / 2) + 3, 0, gWidth, 'c');
+    boxBorder((gWidth / 2), (gheight / 2), (gheight / 4), (gWidth / 4));
+    loadGameDialog();
+    int selection = getInput(1, 4);
+    //char filename[] = {'s', 'a', 'v', 'e', (char)selection, '.', 'd', 'a', 't'};
+    if (selection == 1){
+        Player *p = loadGame("save1.dat");
+        if(p == NULL){
+            loadFailureDialog();
+        } else {
+           movingChoice(p, 1, 1); 
+        }
+    } else if (selection == 2){
+        Player *p = loadGame("save2.dat");
+        if(p == NULL){
+            loadFailureDialog();
+        } else {
+           movingChoice(p, 1, 1); 
+        } 
+    } else if (selection == 3){
+        Player *p = loadGame("save3.dat");
+        if(p == NULL){
+            loadFailureDialog();
+        } else {
+           movingChoice(p, 1, 1); 
+        } 
+    } else if(selection == 4){
+        menu();
+    }
+}
+
+void saveMenu(Player *p, int wall){
+    clearScreen();
+    boxBorder(gWidth, gheight, 1, 1);
+    boxBorder((gWidth / 2), (gheight / 2), (gheight / 4), (gWidth / 4));
+    saveGameDialog();
+    bool saveStatus;
+    int savePos = getInput(1, 4);
+    if (savePos == 1){
+        saveStatus = saveGame(p, "save1.dat");
+    } else if(savePos == 2){
+        saveStatus = saveGame(p, "save2.dat");
+    } else if(savePos == 3){
+        saveStatus = saveGame(p, "save3.dat");
+    } else {
+        movingChoice(p, 1, 1);
+    }
+    if(saveStatus == true){
+        saveSuccessDialog(p);
+        char choice = 'a'; 
+        while(tolower(choice) != '\n'){
+            changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+            printf("  ");
+            changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+            scanf("%c", &choice);
+        }
+        free(p);
+        menu();
+    } else {
+        saveFailureDialog(p);
+        char choice = 'a'; 
+        while(tolower(choice) != '\n'){
+            changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+            printf("  ");
+            changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+            scanf("%c", &choice);
+        }
+        movingChoice(p, wall, wall);
+    }
+}
+
+void gameComplete(Player *p){
+    char selection = 'a';
+    gameCompleteDialog(p);
+    
     do{
         scanf("%c", &selection);
     } while (selection != '\n');
@@ -283,16 +306,16 @@ void gameComplete(Player *p){
 
 void useItemMenu(Player *p, int wall){
     int i;
-    int boxH = 10;
-    int boxW = 20;
-    int startLine = (gheight / 2) - (boxH / 2);
-    int startCol = (gWidth / 2) - (boxW / 2);
+    int boxHitem = 10;
+    int boxWitem = 20;
+    int startLine = (gheight / 2) - (boxHitem / 2);
+    int startCol = (gWidth / 2) - (boxWitem / 2);
     int selection = 0;
     //int numI = numItems(p);
     clearScreen();
     boxBorder(gWidth, gheight, 1, 1);
     userInfo(p);
-    boxBorder(boxW, boxH, startLine, startCol);
+    boxBorder(boxWitem, boxHitem, startLine, startCol);
 
     if(strcmp(p->items[0], "") == 0){
         printText("You do not have any items.", 27, startLine - 2, 0, gWidth, 'c');
@@ -311,7 +334,6 @@ void useItemMenu(Player *p, int wall){
         scanf("%d", &selection);
     }
 
-    //Need to determine if selection is usable on the current wall
     switch(selection){
         case 1:
         case 2:
@@ -325,7 +347,7 @@ void useItemMenu(Player *p, int wall){
             break;
     }
 
-    
+    movingChoice(p, wall, wall);
 }
 
 void useItem(Player *p, int index, int wall){
@@ -337,8 +359,10 @@ void useItem(Player *p, int index, int wall){
     char selection = 'a';
     if(strcmp(p->items[index], "") == 0){
         drawGameScreen(p, 0);
-        printText("Invalid Selection.", 19, gheight / 2, DELAY, gWidth, 'c');
-        printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+        char text[] = "Invalid Selection.";
+        char command[] = "Press Enter to Continue";
+        printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+        printText(command, strlen(command), (gheight / 2) + 2, 0, gWidth, 'c');
         do{
             scanf("%c", &selection);
         } while (selection != '\n');
@@ -346,18 +370,18 @@ void useItem(Player *p, int index, int wall){
         //Journal can be read anywhere as long as lights are on
         if(p->progress_check[2]){
             rmItem(p, "Journal");
-            drawGameScreen(p, 0);
             progUpdate(p, 6);
             addItem(p, "Code");
-            printText("You are able to read the Journal, which has\na numerical code written in it", 76, gheight / 2, DELAY, gWidth, 'c');
-            printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
-            do{
-                scanf("%c", &selection);
-            } while (selection != '\n');
+            drawGameScreen(p, 0);
+            readJournalDialog1(p);
+            readJournalDialog2(p);
+            readJournalDialog3(p);
         } else {
             drawGameScreen(p, 0);
-            printText("It is too dark to read the Journal", 35, gheight / 2, DELAY, gWidth, 'c');
-            printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+            char text[] = "It is too dark to read the Journal";
+            char command[] = "Press Enter to Continue";
+            printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+            printText(command, strlen(command), (gheight / 2) + 2, 0, gWidth, 'c');
             do{
                 scanf("%c", &selection);
             } while (selection != '\n');
@@ -366,11 +390,13 @@ void useItem(Player *p, int index, int wall){
         //Check that oil has been used on lockbox and that Player is one wall 1
         //Handle use of oil
         rmItem(p, "Oil");
-        drawGameScreen(p, 0);
         progUpdate(p, 10);
-        printText("The oil loosens the dial\n"
-            "on the lockbox.", 41, gheight / 2, DELAY, gWidth, 'c');
-        printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+        drawGameScreen(p, 0);
+        char text[] = "You oil the locking mechanism...\n"
+            "It spins freely. Good as new!";
+        char command[] = "Press Enter to Continue";
+        printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+        printText(command, strlen(command), (gheight / 2) + 3, 0, gWidth, 'c');
         do{
             scanf("%c", &selection);
         } while (selection != '\n');
@@ -379,11 +405,14 @@ void useItem(Player *p, int index, int wall){
         //Handle use of oil
         rmItem(p, "Code");
         addItem(p, "Key");
+        progUpdate(p, 18);
         drawGameScreen(p, 0);
-        progUpdate(p, 16);
-        printText("The code unlocks the lockbox.\n"
-            "You find a large Key inside", 58, gheight / 2, DELAY, gWidth, 'c');
-        printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+        char text[] = "You spin the dial using the numbers.\n"
+            "in the code. The box pops open...\n"
+            "The box contains a large key!";
+        char command[] = "Press Enter to Continue";
+        printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+        printText(command, strlen(command), (gheight / 2) + 4, 0, gWidth, 'c');
         do{
             scanf("%c", &selection);
         } while (selection != '\n');
@@ -391,13 +420,15 @@ void useItem(Player *p, int index, int wall){
         //Check that toolbox has been discovered and that player is on wall 2
         rmItem(p, "Brass Key");
         addItem(p, "Oil");
-        drawGameScreen(p, 0);
         progUpdate(p, 14);
-        progUpdate(p, 8);
         progUpdate(p, 9);
-        printText("You use the Small Brass Key on the toolbox and it unlocks.\n"
-            "You find a Small Brass Key inside.", 59, gheight / 2, DELAY, gWidth, 'c');
-        printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+        drawGameScreen(p, 0);
+        char text[] = "You use the Small Brass Key on the toolbox.\n" 
+            "The lock pops open!\n"
+            "There is a small bottle of oil inside.";
+        char command[] = "Press Enter to Continue";
+        printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+        printText(command, strlen(command), (gheight / 2) + 4, 0, gWidth, 'c');
         do{
             scanf("%c", &selection);
         } while (selection != '\n');
@@ -405,8 +436,10 @@ void useItem(Player *p, int index, int wall){
         gameComplete(p);
     } else {
         drawGameScreen(p, 0);
-        printText("You cannot use that item here.", 31, gheight / 2, DELAY, gWidth, 'c');
-        printText("Press Enter to Continue", 24, (gheight / 2) + 2, 0, gWidth, 'c');
+        char text[] = "You cannot use that item here.";
+        char command[] = "Press Enter to Continue";
+        printText(text, strlen(text), gheight / 2, DELAY, gWidth, 'c');
+        printText(command, strlen(command), (gheight / 2) + 2, 0, gWidth, 'c');
         do{
             scanf("%c", &selection);
         } while (selection != '\n');

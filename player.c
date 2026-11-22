@@ -2,9 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "player.h"
-#include "text.h"
-#include "navigation.h"
+#include "ui.h"
+#include "logic.h"
 
 void addItem(Player *p, char *s) {
     for (int i = 0; i < MAX_ITEM; i++) {
@@ -66,7 +65,8 @@ Index   | Item Tracked
 14      | Small Brass Key (used)
 15      | Bed
 16      | Lockbox
-17      | Door Key
+17      | Code
+18      | Door Key
 */
 void progUpdate(Player *p, int index) {
     p->progress_check[index] = true;
@@ -96,24 +96,48 @@ Player* createPlayer(char name[]) {
 }
 
 void exitGame(Player *p, int wall){
-    int boxW = 38;
-    int boxH = 4;
     char selection = 'a';
-    drawGameScreen(p, 0);
-    boxBorder(boxW, boxH, (gheight / 2) - (boxH / 2), (gWidth / 2) - (boxW / 2));
-    printText("Exiting will erase all progress.\nDo you want to continue? Y/N: ",
-        62, (gheight / 2) - (boxH / 2) + 2, 0, gWidth, 'c');
+    printExitDialog(p);
     while(tolower(selection) != 'y' && tolower(selection) != 'n'){
         changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
         printf("  ");
-        changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 15);
+        changePos((gheight / 2) - (boxH / 2) + 3, (gWidth / 2) + 4);
         scanf("%c", &selection);
     }
     if(tolower(selection) == 'y'){
-        free(p);
-        EXIT_SUCCESS;
+        saveMenu(p, wall);
     } else {
-        movingChoice(p, wall, wall);
+        free(p);
+        menu();
     }
     
+}
+
+bool saveGame(const Player *p, char filename[]) {
+    if (p == NULL) {
+        return false;
+    }
+    
+    FILE *file = fopen(filename, "wb"); //opens the text file called save.bat and writes in it in binary
+    if (file == NULL) {
+        return false;    
+    }
+    
+    size_t written = fwrite(p, sizeof(Player), 1, file);
+    fclose(file);
+
+    return written == 1;
+}
+
+Player* loadGame(char filename[]) {
+    Player *p = malloc(sizeof(Player));
+    FILE *file = fopen(filename, "rb");
+    if (file == NULL) {
+        return NULL;
+    } else {
+        fread(p, sizeof(Player),  1, file);
+        fclose(file);
+    }
+
+    return p;
 }

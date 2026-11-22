@@ -1,13 +1,68 @@
 #include <stdio.h>
-#include "text.h"
-#include "images.h"
+#include "ui.h"
 
 void titleImage(){
-    int size = 56;
+    int size = 54;
     int line = 8;
-    printText("  ____                        _____ _ _   _           \n", size, line++, 0, 120, 'c');
-    printText(" / ___| __ _ _ __ ___   ___  |_   _(_) |_| | ___      \n", size, line++, 0, 120, 'c');
-    printText("| |  _ / _` | '_ ` _ \\ / _ \\   | | | | __| |/ _ \\     \n", size, line++, 0, 120, 'c');
-    printText("| |_| | (_| | | | | | |  __/   | | | | |_| |  __/     \n", size, line++, 0, 120, 'c');
-    printText(" \\____|\\__,_|_| |_| |_|\\___|   |_| |_|\\__|_|\\___|     \n", size, line++, 0, 120, 'c');
+    printText("______ __  __  ____    ____    ___     ___   ___  ___", size, line++, 0, gWidth, 'c');
+    printText("| || | ||  || ||       || \\\\  // \\\\   // \\\\  ||\\\\//||", size, line++, 0, gWidth, 'c');
+    printText("  ||   ||==|| ||==     ||_// ((   )) ((   )) || \\/ ||", size, line++, 0, gWidth, 'c');
+    printText("  ||   ||  || ||___    || \\\\  \\\\_//   \\\\_//  ||    ||", size, line++, 0, gWidth, 'c');
+    
+}
+
+void fuseBoxImage(){
+    char text[] = ",--------,\n"
+                  "|    --+ |\n"
+                  "|    --+ |\n"
+                  "| +--    |\n"
+                  "| +--    |\n"
+                  "'--------'";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
+}
+
+void paintingImage(){
+    char text[] = "   .-'\\\n"     
+                  ".-'    \\\n"    
+                  "\\   \\\\  \\\n"   
+                  " \\  \\\\\\  \\\n"  
+                  "  \\  \\.\\--\\\n" 
+                  "   \\.'   .-'\n"
+                  "    \\_.-'   \n";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
+}
+
+void dresserImage(){
+    char text[] = "----------\n"
+                  " |,,,,,,| \n"
+                  " |'````'| \n"
+                  " |,,,,,,| \n"
+                  " |'````'| \n"
+                  " |------| \n";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
+}
+
+void toolboxImage(){
+    char text[] = "    _______    \n"
+                  ",---|-----|---,\n"
+                  "|-----|^|-----|\n"
+                  "|             |\n"
+                  "'-------------'\n";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
+}
+
+void bedImage(){
+    char text[] = "         |\n"
+                  "|,,,,,,,,|\n"
+                  "|````````|\n";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
+}
+
+void lockboxImage(){
+    char text[] = ",-----------,\n"
+                  "|-----------|\n"
+                  "|   ,---,   |\n"
+                  "|   '---'   |\n"
+                  "'-----------'\n";
+    printText(text, strlen(text), (gheight / 2) - 3, 0, gWidth, 'l');
 }

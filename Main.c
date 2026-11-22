@@ -1,5 +1,5 @@
-#include "text.h"
-#include "navigation.h"
+#include "ui.h"
+#include "logic.h"
 
 int main(){
     clearScreen();

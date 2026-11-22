@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "player.h"
-#include "text.h"
+//#include "player.h"
+//#include "text.h"
 #include "images.h"
 
 void useItemMenu(Player *p, int wall);

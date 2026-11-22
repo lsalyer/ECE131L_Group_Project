@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "player.h"
-#include "text.h"
-#include "navigation.h"
+#include "ui.h"
 
 //Parameters: Text array, size of array, line to being printing, delay, width of text area, and alignment (c)enter, (l)eft, or (r)ight
 void printText(char arr[], int size, int line, int del, int w, char a){
@@ -147,7 +145,7 @@ int nextLine(char arr[], int size, int start){
 void userInfo(Player *p){
     int startCol = gWidth - 24;
     int tasksComp = tasksComplete(p);
-    int percentComp = (((float)tasksComp / 17) * 100);
+    int percentComp = (((float)tasksComp / NUM_CHECK) * 100);
     boxBorder(24, 14, 4, gWidth - 26);
     changePos(5, startCol);
     printf("Player:");
@@ -180,7 +178,8 @@ void clearBuffer(){
 }
 
 void gameMenu(){
-    char menu[] = "[1] Turn Left  [2] Interact  [3] Turn Left\n[4] Use Item  [5] Exit";
+    char menu[] = "[1] Turn Left  [2] Interact  [3] Turn Right\n"
+    "[4] Use Item  [5] Exit";
     printText(menu, strlen(menu), gheight - 6, 0, gWidth, 'c');
     
 }
@@ -207,8 +206,9 @@ int getInput(int min, int max){
         changePos(gheight - 3, (gWidth / 2) + 10);
         printf("                                 ");
         //Prints prompt and gets input
-        printText("Enter your selection: ", 23, gheight - 3, 0, gWidth, 'c');
-        scanf("%d", &selection);
+        char text[] = "Enter your selection: ";
+        printText(text, strlen(text), gheight - 3, 0, gWidth, 'c');
+        scanf(" %d", &selection);
         clearBuffer();
     } while (selection < min || selection > max);
     return selection;

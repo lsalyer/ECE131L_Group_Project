@@ -8,6 +8,7 @@
 #define MAX_LEN 10
 #define MAX_ITEM 5
 #define MAX_NAME 20
+#define SAVE_FILE "save.dat"
 
 
 typedef struct {
@@ -28,5 +29,7 @@ Player* createPlayer(char name[]);
 int numItems(Player *p);
 int tasksComplete(Player *p);
 void exitGame(Player *p, int wall);
+//bool saveGame(const Player *p);
+//Player* loadGame(int number)
 
 #endif
